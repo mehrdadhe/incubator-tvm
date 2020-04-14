@@ -110,9 +110,9 @@ def get_network(name, batch_size):
 
 def get_conv2d(batch_size):
     in_ch = 3
-    H = 224
-    W = 224
-    out_ch = 512
+    H = 20
+    W = 20
+    out_ch = 3
     HH = WW = 7
     STRIDE = 1
     PAD = 3
@@ -234,7 +234,8 @@ device_key = 'npi'
 use_android = False
 
 #### TUNING OPTION ####
-network = 'resnet-18'
+# network = 'resnet-18'
+network = 'conv2d'
 log_file = "%s.%s.log" % (device_key, network)
 dtype = 'float32'
 IP = '0.0.0.0'
@@ -244,9 +245,9 @@ tuning_option = {
     'log_filename': log_file,
 
     'tuner': 'xgb_knob',
-    'n_trial': 1500,
+    'n_trial': 400,
     # 'early_stopping': 800,
-    'early_stopping': 800,
+    'early_stopping': 100,
 
     'measure_option': autotvm.measure_option(
         builder=autotvm.LocalBuilder(
@@ -254,7 +255,7 @@ tuning_option = {
         runner=autotvm.RPCRunner(
             device_key, host=IP, port=PORT,
             number=5,
-            timeout=200,
+            timeout=50,
         ),
     ),
 }
@@ -375,7 +376,11 @@ def tune_and_evaluate(tuning_opt):
         ctx = remote.context(str(target), 0)
         module = runtime.create(graph, rlib, ctx)
         data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
-        module.set_input('data', data_tvm)
+        if network == 'conv2d':
+            module.set_input('A', data_tvm)
+        else:
+            module.set_input('data', data_tvm)
+        
         module.set_input(**params)
 
         # evaluate
