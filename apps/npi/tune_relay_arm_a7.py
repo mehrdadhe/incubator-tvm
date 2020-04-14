@@ -247,7 +247,7 @@ tuning_option = {
     'tuner': 'xgb_knob',
     'n_trial': 400,
     # 'early_stopping': 800,
-    'early_stopping': 100,
+    'early_stopping': 400,
 
     'measure_option': autotvm.measure_option(
         builder=autotvm.LocalBuilder(
