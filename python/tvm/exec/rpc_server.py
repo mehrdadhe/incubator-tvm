@@ -48,6 +48,9 @@ def main(args):
     if args.utvm_dev_config or args.utvm_dev_id:
         init_utvm(args)
 
+    if args.azsphere:
+        init_azsphere(args)
+
     server = rpc.Server(args.host,
                         args.port,
                         args.port_end,
@@ -58,6 +61,25 @@ def main(args):
                         silent=args.silent)
     server.proc.join()
 
+def init_azsphere(args):
+    # device_config = micro.device.host.default_config()
+    device_config = {'device_id': 'host', 'toolchain_prefix': '', 
+                    'mem_layout': {'text': {'size': 20480}, 'rodata': {'size': 20480}, 
+                                    'data': {'size': 768}, 'bss': {'size': 768}, 'args': {'size': 1280}, 
+                                    'heap': {'size': 262144}, 'workspace': {'size': 20480}, 'stack': {'size': 80}}
+                    , 'word_size': 8, 'thumb_mode': False, 'comms_method': 'host'}
+                    
+    print(device_config)
+    print("init_azsphre")
+    if args.azsphere:
+        @tvm.register_func('tvm.rpc.server.start', override=True)
+        def server_start():
+            session = micro.AzureSession(device_config)
+            session._enter()
+
+            @tvm.register_func('tvm.rpc.server.shutdown', override=True)
+            def server_shutdown():
+                session._exit()
 
 def init_utvm(args):
     """MicroTVM-specific RPC initialization
@@ -121,6 +143,9 @@ if __name__ == "__main__":
     parser.add_argument('--utvm-dev-config-args', type=str,
                         help=('Python list of literals required to generate a default'
                               ' MicroTVM config (if --utvm-dev-id is specified)'))
+
+    parser.add_argument('--azsphere', action='store_true',
+                        help=(' Azure Sphere Config'))
 
     parser.set_defaults(fork=True)
     args = parser.parse_args()

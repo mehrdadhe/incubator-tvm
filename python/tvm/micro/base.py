@@ -36,6 +36,86 @@ class LibType(Enum):
     # library to be used as an operator
     OPERATOR = 1
 
+class AzureSession:
+
+    def __init__(self, config):
+        print("Azure Session Init")
+
+        self._check_system()
+
+        # grab a binutil instance from the ID in the config
+        dev_funcs = tvm.micro.device.get_device_funcs(config["device_id"])
+        self.create_micro_lib = dev_funcs["create_micro_lib"]
+        self.toolchain_prefix = config["toolchain_prefix"]
+        self.mem_layout = config["mem_layout"]
+        self.word_size = config["word_size"]
+        self.thumb_mode = config["thumb_mode"]
+        self.comms_method = config["comms_method"]
+
+        # First, find and compile runtime library.
+        runtime_src_path = os.path.join(get_micro_host_driven_dir(), "utvm_runtime.c")
+        tmp_dir = _util.tempdir()
+        runtime_obj_path = tmp_dir.relpath("utvm_runtime.obj")
+        self.create_micro_lib(runtime_obj_path, runtime_src_path, LibType.RUNTIME)
+        #input(f"check {runtime_obj_path}: ")
+
+        comms_method = config["comms_method"]
+        if comms_method == "openocd":
+            server_addr = config["server_addr"]
+            server_port = config["server_port"]
+        elif comms_method == "host":
+            server_addr = ""
+            server_port = 0
+        else:
+            raise RuntimeError(f"unknown communication method: f{self.comms_method}")
+
+        # self.module = _CreateSession(
+        #     comms_method,
+        #     runtime_obj_path,
+        #     self.toolchain_prefix,
+        #     self.mem_layout["text"].get("start", 0),
+        #     self.mem_layout["text"]["size"],
+        #     self.mem_layout["rodata"].get("start", 0),
+        #     self.mem_layout["rodata"]["size"],
+        #     self.mem_layout["data"].get("start", 0),
+        #     self.mem_layout["data"]["size"],
+        #     self.mem_layout["bss"].get("start", 0),
+        #     self.mem_layout["bss"]["size"],
+        #     self.mem_layout["args"].get("start", 0),
+        #     self.mem_layout["args"]["size"],
+        #     self.mem_layout["heap"].get("start", 0),
+        #     self.mem_layout["heap"]["size"],
+        #     self.mem_layout["workspace"].get("start", 0),
+        #     self.mem_layout["workspace"]["size"],
+        #     self.mem_layout["stack"].get("start", 0),
+        #     self.mem_layout["stack"]["size"],
+        #     self.word_size,
+        #     self.thumb_mode,
+        #     server_addr,
+        #     server_port)
+        self._enter = self.module["enter"]
+        self._exit = self.module["exit"]
+
+    def _check_system(self):
+        """Check if the user's system is supported by MicroTVM.
+
+        Raises error if not supported.
+        """
+        if not sys.platform.startswith("linux"):
+            raise RuntimeError("MicroTVM is currently only supported on Linux hosts")
+        # TODO(weberlo): Add 32-bit support.
+        # It's primarily the compilation pipeline that isn't compatible.
+        if sys.maxsize <= 2**32:
+            raise RuntimeError("MicroTVM is currently only supported on 64-bit host platforms")
+
+    def __enter__(self):
+        print("Azure Session Enter")
+        self._enter()
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        print("Azure Session Exit")
+        self._exit()
 
 class Session:
     """MicroTVM Device Session

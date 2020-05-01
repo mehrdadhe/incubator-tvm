@@ -337,6 +337,7 @@ class Server(object):
         self.custom_addr = custom_addr
         self.use_popen = use_popen
 
+        print("Server STARTS: ")
         if silent:
             logger.setLevel(logging.ERROR)
 
