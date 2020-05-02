@@ -41,6 +41,20 @@ test_dynamic: $(build_dir)/test_dynamic $(build_dir)/test_bundle.so $(build_dir)
 	TVM_NUM_THREADS=1 $(build_dir)/test_dynamic $(build_dir)/test_bundle.so $(build_dir)/test_data.bin $(build_dir)/test_output.bin $(build_dir)/test_graph.json $(build_dir)/test_params.bin
 	TVM_NUM_THREADS=1 $(build_dir)/test_dynamic $(build_dir)/test_bundle_c.so $(build_dir)/test_data.bin $(build_dir)/test_output.bin $(build_dir)/test_graph.json $(build_dir)/test_params.bin
 
+demo_cifar: $(build_dir)/demo_cifar $(build_dir)/cifar_model.o $(build_dir)/cifar_graph.json.c $(build_dir)/cifar_params.bin
+	TVM_NUM_THREADS=1 $(build_dir)/demo_cifar $(build_dir)/cifar_data.bin $(build_dir)/cifar_output.bin
+
+
+$(build_dir)/cifar_model.o:
+	mkdir -p $(build_dir)
+	cp -f ~/azure-sphere/build/cifar_model.o $(build_dir)
+	cp -f ~/azure-sphere/build/cifar_graph.json $(build_dir)
+	cp -f ~/azure-sphere/build/cifar_params.bin $(build_dir)
+	cp -f ~/azure-sphere/build/cifar_data.bin $(build_dir)
+	cp -f ~/azure-sphere/build/cifar_output.bin $(build_dir)
+	cp -f ~/azure-sphere/build/id.bin $(build_dir)
+
+
 demo_static: $(build_dir)/demo_static $(build_dir)/cat.bin
 	TVM_NUM_THREADS=1 $(build_dir)/demo_static $(build_dir)/cat.bin
 
@@ -55,6 +69,10 @@ $(build_dir)/test_dynamic: test.cc ${build_dir}/test_graph.json ${build_dir}/tes
 	@mkdir -p $(@D)
 	g++ $(PKG_CXXFLAGS) -o $@  test.cc -ldl
 
+$(build_dir)/demo_cifar: cifar.c ${build_dir}/bundle_static.o ${build_dir}/cifar_model.o ${build_dir}/cifar_graph.json.c ${build_dir}/cifar_params.bin.c
+	@mkdir -p $(@D)
+	gcc $(PKG_CXXFLAGS) -o $@ cifar.c ${build_dir}/bundle_static.o ${build_dir}/cifar_model.o -lm
+
 $(build_dir)/demo_static: demo_static.c ${build_dir}/bundle_static.o ${build_dir}/model.o ${build_dir}/graph.json.c ${build_dir}/params.bin.c
 	@mkdir -p $(@D)
 	gcc $(PKG_CXXFLAGS) -o $@ demo_static.c ${build_dir}/bundle_static.o ${build_dir}/model.o -lm
@@ -67,8 +85,14 @@ $(build_dir)/test_static: test_static.c ${build_dir}/bundle_static.o ${build_dir
 $(build_dir)/graph.json.c: $(build_dir)/graph.json
 	xxd -i $^  > $@
 
+$(build_dir)/cifar_graph.json.c: $(build_dir)/cifar_graph.json
+	xxd -i $^  > $@
+
 # Serialize our params.bin file.
 $(build_dir)/params.bin.c: $(build_dir)/params.bin
+	xxd -i $^  > $@
+
+$(build_dir)/cifar_params.bin.c: $(build_dir)/cifar_params.bin
 	xxd -i $^  > $@
 
 # # Serialize our test_graph.json file.

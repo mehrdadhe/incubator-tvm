@@ -32,17 +32,22 @@
 #define TVM_CRT_MAX_ARGS 10
 
 /*! Maximum inputs in a GraphRuntimeNode */
-#define GRAPH_RUNTIME_NODE_MAX_INPUTS 300
+// #define GRAPH_RUNTIME_NODE_MAX_INPUTS 300
+#define GRAPH_RUNTIME_NODE_MAX_INPUTS 10
 /*! Maximum supported contexts in a GraphRuntime */
 #define GRAPH_RUNTIME_MAX_CONTEXTS 1
 /*! Maximum supported nodes in a GraphRuntime */
-#define GRAPH_RUNTIME_MAX_NODES 400
+// #define GRAPH_RUNTIME_MAX_NODES 400
+#define GRAPH_RUNTIME_MAX_NODES 20
 /*! Maximum input nodes in a GraphRuntime */
-#define GRAPH_RUNTIME_MAX_INPUT_NODES 300
+// #define GRAPH_RUNTIME_MAX_INPUT_NODES 300
+#define GRAPH_RUNTIME_MAX_INPUT_NODES 30
 /*! Maximum nodes in a GraphRuntime for quick entry indexing */
-#define GRAPH_RUNTIME_MAX_NODE_ROW_PTR 300
+// #define GRAPH_RUNTIME_MAX_NODE_ROW_PTR 300
+#define GRAPH_RUNTIME_MAX_NODE_ROW_PTR 30
 /*! Maximum output entries in a GraphRuntime */
-#define GRAPH_RUNTIME_MAX_OUTPUTS 300
+// #define GRAPH_RUNTIME_MAX_OUTPUTS 300
+#define GRAPH_RUNTIME_MAX_OUTPUTS 10
 
 #include "../../src/runtime/crt/crt_runtime_api.c"
 #include "../../src/runtime/crt/crt_backend_api.c"
