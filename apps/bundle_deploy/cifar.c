@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <float.h>
+#include <math.h>
 
 #include "bundle.h"
 #include "build/cifar_graph.json.c"
