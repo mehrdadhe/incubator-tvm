@@ -74,19 +74,19 @@ $(build_dir)/test_dynamic: test.cc ${build_dir}/test_graph.json ${build_dir}/tes
 
 $(build_dir)/demo_cifar: cifar.c ${build_dir}/bundle_static.o ${build_dir}/cifar_model.o ${build_dir}/cifar_graph.json.c ${build_dir}/cifar_params.bin.c
 	@mkdir -p $(@D)
-	gcc $(PKG_CXXFLAGS) -o $@ cifar.c ${build_dir}/bundle_static.o ${build_dir}/cifar_model.o -lm
+	gcc $(PKG_CFLAGS) -o $@ cifar.c ${build_dir}/bundle_static.o ${build_dir}/cifar_model.o -lm
 
 $(build_dir)/demo_static: demo_static.c ${build_dir}/bundle_static.o ${build_dir}/model.o ${build_dir}/graph.json.c ${build_dir}/params.bin.c
 	@mkdir -p $(@D)
-	gcc $(PKG_CXXFLAGS) -o $@ demo_static.c ${build_dir}/bundle_static.o ${build_dir}/model.o -lm
+	gcc $(PKG_CFLAGS) -o $@ demo_static.c ${build_dir}/bundle_static.o ${build_dir}/model.o -lm
 
 $(build_dir)/test_static: test_static.c ${build_dir}/bundle_static.o ${build_dir}/test_model.o
 	@mkdir -p $(@D)
-	gcc $(PKG_CXXFLAGS) -o $@ $^
+	gcc $(PKG_CFLAGS) -o $@ $^
 
 $(build_dir)/test_static_i386: test_static.c ${build_dir}/bundle_static_i386.o ${build_dir}/test_model_i386.o
 	@mkdir -p $(@D)
-	gcc -m32 $(PKG_CXXFLAGS) -o $@ $^
+	gcc -m32 $(PKG_CFLAGS) -o $@ $^
 
 # Serialize our graph.json file.
 $(build_dir)/graph.json.c: $(build_dir)/graph.json
