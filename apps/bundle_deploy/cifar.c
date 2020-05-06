@@ -60,14 +60,14 @@ int main(int argc, char **argv) {
   DLContext ctx = {kDLCPU, 0};
   input.ctx = ctx;
   input.ndim = 4;
-  DLDataType dtype = {kDLFloat, 32, 1};
+  DLDataType dtype = {kDLInt, 8, 1};
   input.dtype = dtype;
   int64_t shape [4] = {in_dim0, in_dim1, in_dim2, in_dim3};
   input.shape = shape;
   input.strides = NULL;
   input.byte_offset = 0;
 
-  tvm_runtime_set_input(handle, "conv2d_1_input", &input);
+  tvm_runtime_set_input(handle, "data", &input);
   gettimeofday(&t2, 0);
 
   tvm_runtime_run(handle);
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
   DLContext out_ctx = {kDLCPU, 0};
   output.ctx = out_ctx;
   output.ndim = 2;
-  DLDataType out_dtype = {kDLFloat, 32, 1};
+  DLDataType out_dtype = {kDLInt, 8, 1};
   output.dtype = out_dtype;
   int64_t out_shape [2] = {out_dim0, out_dim1};
   output.shape = out_shape;
