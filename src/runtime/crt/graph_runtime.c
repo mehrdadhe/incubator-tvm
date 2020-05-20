@@ -65,7 +65,7 @@ int NodeEntry_Load(TVMGraphRuntimeNodeEntry * entry, JSONReader * reader) {
 void TVMGraphRuntimeNode_LoadAttrs(TVMGraphRuntimeNode * node, JSONReader *reader,
                                               TVMOpParam* param) {
   int bitmask = 0;
-  char key[20], value[120];
+  char key[20], value[GRAPH_RUNTIME_FUNC_NAME_MAX];
   memset(param, 0, sizeof(TVMOpParam));
   memset(key, 0, sizeof(key));
   memset(value, 0, sizeof(value));
@@ -501,7 +501,7 @@ int TVMGraphRuntime_LoadParams(TVMGraphRuntime * runtime, const char * param_blo
   bptr += sizeof(reserved);
 
   // read names
-  char names[GRAPH_RUNTIME_MAX_NODES][80];
+  char names[GRAPH_RUNTIME_MAX_NODES][GRAPH_RUNTIME_NODE_NAME_MAX];
   memset(names, 0, sizeof(names));
   uint64_t names_count;
   int idx;
@@ -511,7 +511,7 @@ int TVMGraphRuntime_LoadParams(TVMGraphRuntime * runtime, const char * param_blo
     uint64_t name_length;
     name_length = ((uint64_t*)bptr)[0];  // NOLINT(*)
     bptr += sizeof(name_length);
-    if (name_length >= 80) {
+    if (name_length >= GRAPH_RUNTIME_NODE_NAME_MAX) {
       fprintf(stderr, "Error: function name longer than expected.\n");
       status = -1;
     }

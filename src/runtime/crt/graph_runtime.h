@@ -33,7 +33,7 @@
 
 /*! \brief operator attributes about tvm op */
 typedef struct TVMOpParam {
-  char func_name[120];
+  char func_name[GRAPH_RUNTIME_FUNC_NAME_MAX];
   uint32_t num_inputs;
   uint32_t num_outputs;
   uint32_t flatten_data;
@@ -59,14 +59,14 @@ typedef struct TVMGraphRuntimeNode {
   // operator type in string
   char op_type[16];
   // name of the op
-  char name[120];
+  char name[GRAPH_RUNTIME_NODE_NAME_MAX];
   // parameters
   TVMOpParam param;
   // inputs
   TVMGraphRuntimeNodeEntry inputs[GRAPH_RUNTIME_NODE_MAX_INPUTS];
   size_t                   inputs_count;
   // control deps
-  uint32_t control_deps[200];
+  uint32_t control_deps[GRAPH_RUNTIME_CTRL_DEPTH_SIZE];
   // JSON Loader
   void (*LoadAttrs)(struct TVMGraphRuntimeNode * node, JSONReader *reader, TVMOpParam* param);
   // JSON Loader
