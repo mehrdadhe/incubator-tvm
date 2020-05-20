@@ -33,21 +33,25 @@
 
 /*! Maximum inputs in a GraphRuntimeNode */
 // #define GRAPH_RUNTIME_NODE_MAX_INPUTS 300
-#define GRAPH_RUNTIME_NODE_MAX_INPUTS 10
+#define GRAPH_RUNTIME_NODE_MAX_INPUTS 4
 /*! Maximum supported contexts in a GraphRuntime */
 #define GRAPH_RUNTIME_MAX_CONTEXTS 1
 /*! Maximum supported nodes in a GraphRuntime */
 // #define GRAPH_RUNTIME_MAX_NODES 400
-#define GRAPH_RUNTIME_MAX_NODES 20
+#define GRAPH_RUNTIME_MAX_NODES 62
 /*! Maximum input nodes in a GraphRuntime */
 // #define GRAPH_RUNTIME_MAX_INPUT_NODES 300
-#define GRAPH_RUNTIME_MAX_INPUT_NODES 30
+#define GRAPH_RUNTIME_MAX_INPUT_NODES 39
 /*! Maximum nodes in a GraphRuntime for quick entry indexing */
 // #define GRAPH_RUNTIME_MAX_NODE_ROW_PTR 300
-#define GRAPH_RUNTIME_MAX_NODE_ROW_PTR 30
+#define GRAPH_RUNTIME_MAX_NODE_ROW_PTR 63
 /*! Maximum output entries in a GraphRuntime */
 // #define GRAPH_RUNTIME_MAX_OUTPUTS 300
-#define GRAPH_RUNTIME_MAX_OUTPUTS 10
+#define GRAPH_RUNTIME_MAX_OUTPUTS 1
+
+#define GRAPH_RUNTIME_NODE_NAME_MAX     5           //default 80
+#define GRAPH_RUNTIME_FUNC_NAME_MAX     110         //default 120
+#define GRAPH_RUNTIME_CTRL_DEPTH_SIZE   1           //default 200
 
 #include "../../src/runtime/crt/crt_runtime_api.c"
 #include "../../src/runtime/crt/crt_backend_api.c"

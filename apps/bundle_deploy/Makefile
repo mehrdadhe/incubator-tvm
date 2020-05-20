@@ -44,6 +44,8 @@ test_dynamic: $(build_dir)/test_dynamic $(build_dir)/test_bundle.so $(build_dir)
 demo_cifar: $(build_dir)/demo_cifar $(build_dir)/cifar_model.o $(build_dir)/cifar_graph.json.c $(build_dir)/cifar_params.bin
 	TVM_NUM_THREADS=1 $(build_dir)/demo_cifar $(build_dir)/cifar_data.bin $(build_dir)/cifar_output.bin
 
+demo_keyword: $(build_dir)/demo_keyword $(build_dir)/keyword_model.o $(build_dir)/keyword_graph.json.c $(build_dir)/keyword_params.bin
+	TVM_NUM_THREADS=1 $(build_dir)/demo_keyword $(build_dir)/keyword_data.bin $(build_dir)/keyword_output.bin
 
 $(build_dir)/cifar_model.o:
 	mkdir -p $(build_dir)
@@ -54,6 +56,14 @@ $(build_dir)/cifar_model.o:
 	cp -f ~/azure-sphere/build/cifar_output.bin $(build_dir)
 	cp -f ~/azure-sphere/build/id.bin $(build_dir)
 
+$(build_dir)/keyword_model.o:
+	mkdir -p $(build_dir)
+	cp -f ~/azure-sphere/build/keyword_model.o $(build_dir)
+	cp -f ~/azure-sphere/build/keyword_graph.json $(build_dir)
+	cp -f ~/azure-sphere/build/keyword_params.bin $(build_dir)
+	cp -f ~/azure-sphere/build/keyword_data.bin $(build_dir)
+	cp -f ~/azure-sphere/build/keyword_output.bin $(build_dir)
+	cp -f ~/azure-sphere/build/id.bin $(build_dir)
 
 demo_static: $(build_dir)/demo_static $(build_dir)/cat.bin
 	TVM_NUM_THREADS=1 $(build_dir)/demo_static $(build_dir)/cat.bin
@@ -76,6 +86,10 @@ $(build_dir)/demo_cifar: cifar.c ${build_dir}/bundle_static.o ${build_dir}/cifar
 	@mkdir -p $(@D)
 	gcc $(PKG_CFLAGS) -o $@ cifar.c ${build_dir}/bundle_static.o ${build_dir}/cifar_model.o -lm
 
+$(build_dir)/demo_keyword: keyword.c ${build_dir}/bundle_static.o ${build_dir}/keyword_model.o ${build_dir}/keyword_graph.json.c ${build_dir}/keyword_params.bin.c
+	@mkdir -p $(@D)
+	gcc $(PKG_CFLAGS) -o $@ keyword.c ${build_dir}/bundle_static.o ${build_dir}/keyword_model.o -lm
+
 $(build_dir)/demo_static: demo_static.c ${build_dir}/bundle_static.o ${build_dir}/model.o ${build_dir}/graph.json.c ${build_dir}/params.bin.c
 	@mkdir -p $(@D)
 	gcc $(PKG_CFLAGS) -o $@ demo_static.c ${build_dir}/bundle_static.o ${build_dir}/model.o -lm
@@ -95,11 +109,17 @@ $(build_dir)/graph.json.c: $(build_dir)/graph.json
 $(build_dir)/cifar_graph.json.c: $(build_dir)/cifar_graph.json
 	xxd -i $^  > $@
 
+$(build_dir)/keyword_graph.json.c: $(build_dir)/keyword_graph.json
+	xxd -i $^  > $@
+
 # Serialize our params.bin file.
 $(build_dir)/params.bin.c: $(build_dir)/params.bin
 	xxd -i $^  > $@
 
 $(build_dir)/cifar_params.bin.c: $(build_dir)/cifar_params.bin
+	xxd -i $^  > $@
+
+$(build_dir)/keyword_params.bin.c: $(build_dir)/keyword_params.bin
 	xxd -i $^  > $@
 
 # # Serialize our test_graph.json file.
